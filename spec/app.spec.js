@@ -36,4 +36,19 @@ describe('server', () => {
         });
     });
   });
+  describe('/api/users/:username', () => {
+    it('GET:200 returns an object of a particular user', () => {
+      return request(app)
+        .get('/api/users/rogersop')
+        .expect(200)
+        .then(res => {
+          expect(res.body.user).to.eql({
+            username: 'rogersop',
+            name: 'paul',
+            avatar_url:
+              'https://avatars2.githubusercontent.com/u/24394918?s=400&v=4'
+          });
+        });
+    });
+  });
 });
