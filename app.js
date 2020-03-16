@@ -11,4 +11,6 @@ app.route('/*').all((req, res, next) => {
   res.status(404).send({ error: 'page not found' });
 });
 
+app.use(serverErrors);
+
 module.exports = app;

@@ -5,6 +5,6 @@ exports.fetchUser = username => {
     .select()
     .where({ username })
     .then(user => {
-      return user[0];
+      return user.length > 0 ? user[0] : Promise.reject('noUser');
     });
 };

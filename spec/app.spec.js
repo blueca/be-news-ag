@@ -50,5 +50,13 @@ describe('server', () => {
           });
         });
     });
+    it('GET:404 returns an error message for username not found', () => {
+      return request(app)
+        .get('/api/users/not-a-username')
+        .expect(404)
+        .then(res => {
+          expect(res.body.error).to.equal('username not found');
+        });
+    });
   });
 });
