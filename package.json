@@ -10,7 +10,8 @@
     "migrate-rollback": "knex migrate:rollback",
     "seed": "knex seed:run",
     "test-utils": "mocha spec/utils.spec.js",
-    "test": "mocha spec/app.spec.js"
+    "test": "mocha spec/app.spec.js",
+    "dev": "node listen.js"
   },
   "repository": {
     "type": "git",
