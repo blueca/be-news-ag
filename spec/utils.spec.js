@@ -32,7 +32,7 @@ describe('formatDates', () => {
         topic: 'mitch',
         author: 'butter_bridge',
         body: 'I find this existence challenging',
-        created_at: new Date(1542284514171).toString(),
+        created_at: new Date(1542284514171).toISOString(),
         votes: 100
       }
     ];
@@ -87,7 +87,7 @@ describe('formatDates', () => {
         topic: 'mitch',
         author: 'butter_bridge',
         body: 'I find this existence challenging',
-        created_at: new Date(1542284514171).toString(),
+        created_at: new Date(1542284514171).toISOString(),
         votes: 100
       },
       {
@@ -95,7 +95,7 @@ describe('formatDates', () => {
         topic: 'mitch',
         author: 'icellusedkars',
         body: 'some gifs',
-        created_at: new Date(1289996514171).toString()
+        created_at: new Date(1289996514171).toISOString()
       }
     ];
     expect(actual[0]).to.eql(expected[0]);
@@ -140,7 +140,7 @@ describe('formatComments', () => {
         article_id: 2,
         author: 'butter_bridge',
         votes: 16,
-        created_at: new Date(1511354163389).toString()
+        created_at: new Date(1511354163389).toISOString()
       }
     ];
     expect(actual[0]).to.eql(expected[0]);
@@ -194,14 +194,14 @@ describe('formatComments', () => {
         article_id: 2,
         author: 'butter_bridge',
         votes: 16,
-        created_at: new Date(1511354163389).toString()
+        created_at: new Date(1511354163389).toISOString()
       },
       {
         body: 'Another test!',
         article_id: 'Article Q',
         author: 'abc123',
         votes: 166,
-        created_at: new Date(1542284514171).toString()
+        created_at: new Date(1542284514171).toISOString()
       }
     ];
     expect(actual[0]).to.eql(expected[0]);

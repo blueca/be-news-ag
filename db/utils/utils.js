@@ -1,8 +1,8 @@
 exports.formatDates = list => {
   const nArr = list.map(obj => {
     const nObj = { ...obj };
-    const nDate = new Date(nObj.created_at).toString();
     if (nObj.created_at !== undefined) {
+      const nDate = new Date(nObj.created_at).toISOString();
       nObj.created_at = nDate;
     }
     return nObj;
