@@ -60,7 +60,7 @@ describe('server', () => {
     });
   });
   describe('/api/articles/:article_id', () => {
-    it('GET:200 returns and article object as specified by the article_id', () => {
+    it('GET:200 returns an article object as specified by the article_id', () => {
       return request(app)
         .get('/api/articles/9')
         .expect(200)
@@ -75,6 +75,14 @@ describe('server', () => {
             votes: 0,
             comment_count: 2
           });
+        });
+    });
+    it("ERROR:GET:404 returns an error message for an article which doesn't exist", () => {
+      return request(app)
+        .get('/api/articles/0')
+        .expect(404)
+        .then(res => {
+          expect(res.body.error).to.equal('article not found');
         });
     });
   });

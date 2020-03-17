@@ -16,3 +16,9 @@ TypeError: Cannot read property 'then' of undefined
 Tue Mar 17 2020 09:19:04 GMT+0000 (Greenwich Mean Time):
 TypeError: Cannot read property 'then' of undefined
 
+Tue Mar 17 2020 09:48:27 GMT+0000 (Greenwich Mean Time):
+noArticle
+
+Tue Mar 17 2020 09:53:04 GMT+0000 (Greenwich Mean Time):
+error: select * from "articles" where "article_id" = $1 - invalid input syntax for integer: "hello"
+

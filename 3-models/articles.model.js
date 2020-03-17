@@ -5,7 +5,7 @@ exports.fetchArticle = article_id => {
     .select()
     .where({ article_id })
     .then(article => {
-      return article[0];
+      return article.length > 0 ? article[0] : Promise.reject('noArticle');
     });
   const commentCount = knex('comments')
     .count()
