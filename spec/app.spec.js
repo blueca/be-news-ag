@@ -29,7 +29,7 @@ describe('/api', () => {
           expect(res.body.topics).to.be.an('array');
         });
     });
-    it('INVALID METHODS:405', () => {
+    it('ERROR:405 for invalid methods', () => {
       const invalidMethods = ['patch', 'post', 'delete', 'put'];
       const methodPromises = invalidMethods.map(method => {
         return request(app)
@@ -38,8 +38,8 @@ describe('/api', () => {
           .then(res => {
             expect(res.body.error).to.equal('invalid method');
           });
-        return Promise.all(methodPromises);
       });
+      return Promise.all(methodPromises);
     });
   });
   describe('/users/:username', () => {
@@ -63,6 +63,18 @@ describe('/api', () => {
         .then(res => {
           expect(res.body.error).to.equal('username not found');
         });
+    });
+    it('ERROR:405 for invalid methods', () => {
+      const invalidMethods = ['patch', 'post', 'delete', 'put'];
+      const methodPromises = invalidMethods.map(method => {
+        return request(app)
+          [method]('/api/users/rogersop')
+          .expect(405)
+          .then(res => {
+            expect(res.body.error).to.equal('invalid method');
+          });
+      });
+      return Promise.all(methodPromises);
     });
   });
   describe('/articles/:article_id', () => {
@@ -98,6 +110,18 @@ describe('/api', () => {
         .then(res => {
           expect(res.body.error).to.equal('bad request');
         });
+    });
+    it('ERROR:405 for invalid methods', () => {
+      const invalidMethods = ['post', 'delete', 'put'];
+      const methodPromises = invalidMethods.map(method => {
+        return request(app)
+          [method]('/api/articles/2')
+          .expect(405)
+          .then(res => {
+            expect(res.body.error).to.equal('invalid method');
+          });
+      });
+      return Promise.all(methodPromises);
     });
   });
 });
