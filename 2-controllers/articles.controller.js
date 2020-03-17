@@ -21,7 +21,9 @@ exports.updateArticle = (req, res, next) => {
 };
 
 exports.postComment = (req, res, next) => {
-  insertComment(req.params.article_id, req.body).then(comment => {
-    res.status(201).send({ comment });
-  });
+  insertComment(req.params.article_id, req.body)
+    .then(comment => {
+      res.status(201).send({ comment });
+    })
+    .catch(next);
 };

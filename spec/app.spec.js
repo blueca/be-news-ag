@@ -189,6 +189,32 @@ describe('/api', () => {
             expect(res.body.comment.body).to.equal('adding a new comment');
           });
       });
+      it('ERROR:POST:400 returns an error message when sent body is missing a required property', () => {
+        return request(app)
+          .post('/api/articles/9/comments')
+          .send({
+            body: "this comment object doesn't have a username property"
+          })
+          .expect(400)
+          .then(res => {
+            expect(res.body.error).to.equal(
+              'request is missing a required key'
+            );
+          });
+      });
+      it('ERROR:POST:400 returns an error message when body includes additional parameters', () => {
+        return request(app)
+          .post('/api/articles/9/comments')
+          .send({
+            username: 'lurker',
+            body: 'this is the comment',
+            article_id: 4
+          })
+          .expect(400)
+          .then(res => {
+            expect(res.body.error).to.equal('request has too many properties');
+          });
+      });
     });
   });
 });
