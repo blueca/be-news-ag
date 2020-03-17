@@ -79,5 +79,13 @@ describe('/api', () => {
           expect(res.body.error).to.equal('article not found');
         });
     });
+    it('ERROR:GET:400 returns an error message for an invalid article_id', () => {
+      return request(app)
+        .get('/api/articles/not-valid')
+        .expect(400)
+        .then(res => {
+          expect(res.body.error).to.equal('bad request');
+        });
+    });
   });
 });
