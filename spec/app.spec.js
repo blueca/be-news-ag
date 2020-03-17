@@ -117,7 +117,7 @@ describe('/api', () => {
         .send({ inc_votes: 4 })
         .expect(200)
         .then(res => {
-          expect(res.body.updatedArticle).to.eql({
+          expect(res.body.article).to.eql({
             article_id: 9,
             title: "They're not exactly dogs, are they?",
             topic: 'mitch',
