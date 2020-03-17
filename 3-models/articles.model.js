@@ -38,3 +38,17 @@ exports.incrementArticleVotes = (article_id, votes) => {
       });
   }
 };
+
+exports.insertComment = (article_id, body) => {
+  const newComment = { ...body };
+  newComment.article_id = article_id;
+  newComment.author = newComment.username;
+  delete newComment.username;
+
+  return knex('comments')
+    .insert(newComment)
+    .returning('*')
+    .then(comment => {
+      return comment[0];
+    });
+};

@@ -168,5 +168,27 @@ describe('/api', () => {
       });
       return Promise.all(methodPromises);
     });
+    describe('/comments', () => {
+      it('POST:201 adds a comment and returns the new comment', () => {
+        return request(app)
+          .post('/api/articles/9/comments')
+          .send({ username: 'lurker', body: 'adding a new comment' })
+          .expect(201)
+          .then(res => {
+            expect(res.body.comment).to.have.all.keys([
+              'comment_id',
+              'author',
+              'article_id',
+              'votes',
+              'created_at',
+              'body'
+            ]);
+            expect(res.body.comment.comment_id).to.equal(19);
+            expect(res.body.comment.author).to.equal('lurker');
+            expect(res.body.comment.article_id).to.equal(9);
+            expect(res.body.comment.body).to.equal('adding a new comment');
+          });
+      });
+    });
   });
 });
