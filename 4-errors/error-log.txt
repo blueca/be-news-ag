@@ -22,3 +22,9 @@ noArticle
 Tue Mar 17 2020 09:53:04 GMT+0000 (Greenwich Mean Time):
 error: select * from "articles" where "article_id" = $1 - invalid input syntax for integer: "hello"
 
+Tue Mar 17 2020 10:29:00 GMT+0000 (Greenwich Mean Time):
+error: select * from "articles" where "article_id" = $1 - relation "articles" does not exist
+
+Tue Mar 17 2020 10:29:00 GMT+0000 (Greenwich Mean Time):
+error: select count(*) from "comments" where "article_id" = $1 - relation "comments" does not exist
+

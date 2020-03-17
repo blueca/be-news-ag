@@ -9,24 +9,18 @@ const knex = require('../db/connection');
 
 chai.use(chaiSorted);
 
-describe('server', () => {
-  beforeEach(() => {
-    return knex.seed.run();
+describe('/api', () => {
+  beforeEach(() => knex.seed.run());
+  after(() => knex.destroy());
+  it('ERROR:GET:404 returns an error message for route not found', () => {
+    return request(app)
+      .get('/not-a-route')
+      .expect(404)
+      .then(res => {
+        expect(res.body.error).to.equal('page not found');
+      });
   });
-  after(() => {
-    knex.destroy();
-  });
-  describe('/not-a-route', () => {
-    it('ERROR:GET:404 returns an error message for route not found', () => {
-      return request(app)
-        .get('/not-a-route')
-        .expect(404)
-        .then(res => {
-          expect(res.body.error).to.equal('page not found');
-        });
-    });
-  });
-  describe('/api/topics', () => {
+  describe('/topics', () => {
     it('GET:200 returns an object containing an array of all topics', () => {
       return request(app)
         .get('/api/topics')
@@ -36,7 +30,7 @@ describe('server', () => {
         });
     });
   });
-  describe('/api/users/:username', () => {
+  describe('/users/:username', () => {
     it('GET:200 returns an object of a particular user', () => {
       return request(app)
         .get('/api/users/rogersop')
@@ -59,7 +53,7 @@ describe('server', () => {
         });
     });
   });
-  describe('/api/articles/:article_id', () => {
+  describe('/articles/:article_id', () => {
     it('GET:200 returns an article object as specified by the article_id', () => {
       return request(app)
         .get('/api/articles/9')
