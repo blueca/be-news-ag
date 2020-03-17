@@ -13,3 +13,7 @@ exports.serverErrors = (err, req, res, next) => {
     res.status(500).send({ 'internal error': 'this error has been logged' });
   }
 };
+
+exports.method405 = (req, res, next) => {
+  res.status(405).send({ error: 'invalid method' });
+};

@@ -11,7 +11,7 @@
     "seed": "knex seed:run",
     "test-utils": "mocha spec/utils.spec.js",
     "test": "npm run setup-dbs && mocha spec/app.spec.js",
-    "dev": "node listen.js"
+    "dev": "npm run setup-dbs && npm run migrate-latest && npm run seed &&node listen.js"
   },
   "repository": {
     "type": "git",

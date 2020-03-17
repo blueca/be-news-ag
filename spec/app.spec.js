@@ -29,6 +29,18 @@ describe('/api', () => {
           expect(res.body.topics).to.be.an('array');
         });
     });
+    it('INVALID METHODS:405', () => {
+      const invalidMethods = ['patch', 'post', 'delete', 'put'];
+      const methodPromises = invalidMethods.map(method => {
+        return request(app)
+          [method]('/api/topics')
+          .expect(405)
+          .then(res => {
+            expect(res.body.error).to.equal('invalid method');
+          });
+        return Promise.all(methodPromises);
+      });
+    });
   });
   describe('/users/:username', () => {
     it('GET:200 returns an object of a particular user', () => {
