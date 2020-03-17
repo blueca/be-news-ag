@@ -24,10 +24,15 @@ exports.fetchArticle = article_id => {
 };
 
 exports.incrementArticleVotes = (article_id, votes) => {
-  return knex('articles')
-    .where({ article_id })
-    .increment({ votes })
-    .then(() => {
-      return this.fetchArticle(article_id);
-    });
+  if (votes === undefined) {
+    return Promise.reject('noKey');
+  } else {
+    return knex('articles')
+      .where({ article_id })
+      .increment({ votes })
+      .then(() => {
+        // didn't use .returning('*') as I assume the updated article which gets returned should have a comment count
+        return this.fetchArticle(article_id);
+      });
+  }
 };

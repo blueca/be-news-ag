@@ -12,9 +12,9 @@ exports.sendArticle = (req, res, next) => {
 };
 
 exports.updateArticle = (req, res, next) => {
-  incrementArticleVotes(req.params.article_id, req.body.inc_votes).then(
-    updatedArticle => {
+  incrementArticleVotes(req.params.article_id, req.body.inc_votes)
+    .then(updatedArticle => {
       res.status(200).send({ updatedArticle });
-    }
-  );
+    })
+    .catch(next);
 };

@@ -129,6 +129,15 @@ describe('/api', () => {
           });
         });
     });
+    it("ERROR:PATCH:400 returns an error message when sent body doesn't have an inc_votes key", () => {
+      return request(app)
+        .patch('/api/articles/9')
+        .send({})
+        .expect(400)
+        .then(res => {
+          expect(res.body.error).to.equal('request is missing a required key');
+        });
+    });
     it('ERROR:405 for invalid methods', () => {
       const invalidMethods = ['post', 'delete', 'put'];
       const methodPromises = invalidMethods.map(method => {

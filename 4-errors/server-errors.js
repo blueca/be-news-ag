@@ -3,7 +3,8 @@ const fs = require('fs').promises;
 exports.serverErrors = (err, req, res, next) => {
   const errors = {
     noUser: { status: 404, msg: 'username not found' },
-    noArticle: { status: 404, msg: 'article not found' }
+    noArticle: { status: 404, msg: 'article not found' },
+    noKey: { status: 400, msg: 'request is missing a required key' }
   };
 
   if (err in errors) {
