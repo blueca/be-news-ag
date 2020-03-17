@@ -215,6 +215,18 @@ describe('/api', () => {
             expect(res.body.error).to.equal('request has too many properties');
           });
       });
+      it('ERROR:POST:400 returns an error message when body includes a username which is not in the usernames table', () => {
+        return request(app)
+          .post('/api/articles/9/comments')
+          .send({
+            username: 'notintable',
+            body: 'this is the comment'
+          })
+          .expect(400)
+          .then(res => {
+            expect(res.body.error).to.equal('username not found');
+          });
+      });
     });
   });
 });

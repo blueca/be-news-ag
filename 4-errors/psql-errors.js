@@ -3,7 +3,9 @@ exports.psqlErrors = (err, req, res, next) => {
 
   const errors = {
     '22P02': { status: 400, msg: 'bad request' },
-    '23502': { status: 400, msg: 'request is missing a required key' }
+    '23502': { status: 400, msg: 'request is missing a required key' },
+    // template literal for "x not found" based on 'constraint' key of err?
+    '23503': { status: 400, msg: 'username not found' }
   };
 
   if (code in errors) {
