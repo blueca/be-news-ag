@@ -56,3 +56,10 @@ exports.insertComment = (article_id, body) => {
       });
   }
 };
+
+exports.fetchComments = params => {
+  const { article_id } = params;
+  return knex('comments')
+    .select()
+    .where({ article_id });
+};

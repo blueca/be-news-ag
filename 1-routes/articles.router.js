@@ -2,7 +2,8 @@ const articlesRouter = require('express').Router();
 const {
   sendArticle,
   updateArticle,
-  postComment
+  postComment,
+  sendComments
 } = require('../2-controllers/articles.controller');
 const { method405 } = require('../4-errors/server-errors');
 
@@ -12,6 +13,9 @@ articlesRouter
   .patch(updateArticle)
   .all(method405);
 
-articlesRouter.route('/:article_id/comments').post(postComment);
+articlesRouter
+  .route('/:article_id/comments')
+  .post(postComment)
+  .get(sendComments);
 
 module.exports = articlesRouter;

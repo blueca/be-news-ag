@@ -227,6 +227,14 @@ describe('/api', () => {
             expect(res.body.error).to.equal('username not found');
           });
       });
+      it('GET:200 returns an array of comments for a particular article_id', () => {
+        return request(app)
+          .get('/api/articles/9/comments')
+          .expect(200)
+          .then(res => {
+            expect(res.body.comments).to.be.an('array');
+          });
+      });
     });
   });
 });
