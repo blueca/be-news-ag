@@ -22,3 +22,12 @@ exports.fetchArticle = article_id => {
     }
   );
 };
+
+exports.incrementArticleVotes = (article_id, votes) => {
+  return knex('articles')
+    .where({ article_id })
+    .increment({ votes })
+    .then(() => {
+      return this.fetchArticle(article_id);
+    });
+};

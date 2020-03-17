@@ -111,6 +111,24 @@ describe('/api', () => {
           expect(res.body.error).to.equal('bad request');
         });
     });
+    it('PATCH:200 updates the article based on request body, returns updated article', () => {
+      return request(app)
+        .patch('/api/articles/9')
+        .send({ inc_votes: 4 })
+        .expect(200)
+        .then(res => {
+          expect(res.body.updatedArticle).to.eql({
+            article_id: 9,
+            title: "They're not exactly dogs, are they?",
+            topic: 'mitch',
+            author: 'butter_bridge',
+            body: 'Well? Think about it.',
+            created_at: new Date(533132514171).toISOString(),
+            votes: 4,
+            comment_count: 2
+          });
+        });
+    });
     it('ERROR:405 for invalid methods', () => {
       const invalidMethods = ['post', 'delete', 'put'];
       const methodPromises = invalidMethods.map(method => {
