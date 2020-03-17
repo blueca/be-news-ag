@@ -232,7 +232,13 @@ describe('/api', () => {
           .get('/api/articles/9/comments')
           .expect(200)
           .then(res => {
-            expect(res.body.comments).to.be.an('array');
+            expect(res.body.comments[0]).to.have.all.keys([
+              'comment_id',
+              'author',
+              'votes',
+              'created_at',
+              'body'
+            ]);
           });
       });
     });
