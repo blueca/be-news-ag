@@ -13,9 +13,8 @@ apiRouter.use('/topics', topicsRouter);
 apiRouter.use('/users', usersRouter);
 apiRouter.use('/articles', articlesRouter);
 
-apiRouter.route('/*').all((err, req, res, next) => {
-  console.log('in the all');
-  res.status(404).send({ error: 'page not found' });
-});
+// apiRouter.route('/*').all((err, req, res, next) => {
+//   res.status(404).send({ error: 'page not found' });
+// });
 
 module.exports = apiRouter;

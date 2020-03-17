@@ -138,6 +138,24 @@ describe('/api', () => {
           expect(res.body.error).to.equal('request is missing a required key');
         });
     });
+    it('ERROR:PATCH:400 returns an error message when body property is an invalid format', () => {
+      return request(app)
+        .patch('/api/articles/9')
+        .send({ inc_votes: 'not-valid' })
+        .expect(400)
+        .then(res => {
+          expect(res.body.error).to.equal('bad request');
+        });
+    });
+    it('ERROR:PATCH:400 returns an error message when body includes additional properties', () => {
+      return request(app)
+        .patch('/api/articles/9')
+        .send({ inc_votes: 4, name: 'Nick' })
+        .expect(400)
+        .then(res => {
+          expect(res.body.error).to.equal('request has too many properties');
+        });
+    });
     it('ERROR:405 for invalid methods', () => {
       const invalidMethods = ['post', 'delete', 'put'];
       const methodPromises = invalidMethods.map(method => {

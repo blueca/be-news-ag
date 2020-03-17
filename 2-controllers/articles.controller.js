@@ -12,9 +12,18 @@ exports.sendArticle = (req, res, next) => {
 };
 
 exports.updateArticle = (req, res, next) => {
-  incrementArticleVotes(req.params.article_id, req.body.inc_votes)
-    .then(updatedArticle => {
+  let promise;
+  if (req.body.inc_votes === undefined) {
+    promise = Promise.reject('noKey');
+  } else if (Object.keys(req.body).length > 1) {
+    promise = Promise.reject('extraKey');
+  } else {
+    promise = incrementArticleVotes(
+      req.params.article_id,
+      req.body.inc_votes
+    ).then(updatedArticle => {
       res.status(200).send({ updatedArticle });
-    })
-    .catch(next);
+    });
+  }
+  promise.catch(next);
 };
