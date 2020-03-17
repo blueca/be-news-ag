@@ -17,7 +17,7 @@ describe('server', () => {
     knex.destroy();
   });
   describe('/not-a-route', () => {
-    it('GET:404 returns an error message for route not found', () => {
+    it('ERROR:GET:404 returns an error message for route not found', () => {
       return request(app)
         .get('/not-a-route')
         .expect(404)
@@ -50,12 +50,31 @@ describe('server', () => {
           });
         });
     });
-    it('GET:404 returns an error message for username not found', () => {
+    it('ERROR:GET:404 returns an error message for username not found', () => {
       return request(app)
         .get('/api/users/not-a-username')
         .expect(404)
         .then(res => {
           expect(res.body.error).to.equal('username not found');
+        });
+    });
+  });
+  describe('/api/articles/:article_id', () => {
+    it('GET:200 returns and article object as specified by the article_id', () => {
+      return request(app)
+        .get('/api/articles/9')
+        .expect(200)
+        .then(res => {
+          expect(res.body.article).to.eql({
+            article_id: 9,
+            title: "They're not exactly dogs, are they?",
+            topic: 'mitch',
+            author: 'butter_bridge',
+            body: 'Well? Think about it.',
+            created_at: new Date(533132514171).toISOString(),
+            votes: 0,
+            comment_count: 2
+          });
         });
     });
   });

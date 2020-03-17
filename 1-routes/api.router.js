@@ -1,6 +1,7 @@
 const apiRouter = require('express').Router();
 const topicsRouter = require('./topics.router');
 const usersRouter = require('./users.router');
+const articlesRouter = require('./articles.router');
 
 apiRouter.get('/', (req, res, next) => {
   res.status(200).send({
@@ -10,6 +11,7 @@ apiRouter.get('/', (req, res, next) => {
 
 apiRouter.use('/topics', topicsRouter);
 apiRouter.use('/users', usersRouter);
+apiRouter.use('/articles', articlesRouter);
 
 apiRouter.route('/*').all((err, req, res, next) => {
   console.log('in the all');
