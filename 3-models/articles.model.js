@@ -76,7 +76,11 @@ exports.fetchComments = (params, query) => {
 };
 
 exports.fetchArticles = queries => {
-  const { sort_by = 'created_at', order = 'desc' } = queries;
+  let { sort_by = 'created_at', order = 'desc' } = queries;
+
+  if (order !== 'desc' && order !== 'asc') {
+    order = 'desc';
+  }
 
   return knex
     .select(

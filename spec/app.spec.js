@@ -120,6 +120,22 @@ describe('/api', () => {
           expect(res.body.articles).to.be.ascendingBy('comment_count');
         });
     });
+    it('ERROR:GET:400 returns error message when sort_by query is given a nonexistent column', () => {
+      return request(app)
+        .get('/api/articles?sort_by=not_a_column')
+        .expect(400)
+        .then(res => {
+          expect(res.body.error).to.equal('invalid data in query');
+        });
+    });
+    it('GET:200 when passed an order query other than asc/desc, uses default order', () => {
+      return request(app)
+        .get('/api/articles?order=bad')
+        .expect(200)
+        .then(res => {
+          expect(res.body.articles).to.be.descendingBy('created_at');
+        });
+    });
     describe('/:article_id', () => {
       it('GET:200 returns an article object as specified by the article_id', () => {
         return request(app)
