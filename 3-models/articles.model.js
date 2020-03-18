@@ -71,3 +71,22 @@ exports.fetchComments = (params, query) => {
       }
     });
 };
+
+exports.fetchArticles = () => {
+  return knex
+    .select(
+      'articles.author',
+      'articles.title',
+      'articles.article_id',
+      'articles.topic',
+      'articles.created_at',
+      'articles.votes'
+    )
+    .from('articles')
+    .count({ comment_count: 'comment_id' })
+    .leftJoin('comments', 'articles.article_id', 'comments.article_id')
+    .groupBy('articles.article_id')
+    .then(articles => {
+      return articles;
+    });
+};

@@ -2,7 +2,8 @@ const {
   fetchArticle,
   incrementArticleVotes,
   insertComment,
-  fetchComments
+  fetchComments,
+  fetchArticles
 } = require('../3-models/articles.model');
 
 exports.sendArticle = (req, res, next) => {
@@ -35,4 +36,10 @@ exports.sendComments = (req, res, next) => {
       res.status(200).send({ comments });
     })
     .catch(next);
+};
+
+exports.sendArticles = (req, res, next) => {
+  fetchArticles().then(articles => {
+    res.status(200).send({ articles });
+  });
 };

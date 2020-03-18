@@ -78,7 +78,23 @@ describe('/api', () => {
     });
   });
   describe('/articles', () => {
-    it('', () => {});
+    it('GET:200 returns an object containing an array of all articles', () => {
+      return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(res => {
+          expect(res.body.articles).to.have.lengthOf(12);
+          expect(res.body.articles[0]).to.have.all.keys([
+            'author',
+            'title',
+            'article_id',
+            'topic',
+            'created_at',
+            'votes',
+            'comment_count'
+          ]);
+        });
+    });
     describe('/:article_id', () => {
       it('GET:200 returns an article object as specified by the article_id', () => {
         return request(app)

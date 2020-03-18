@@ -3,9 +3,12 @@ const {
   sendArticle,
   updateArticle,
   postComment,
-  sendComments
+  sendComments,
+  sendArticles
 } = require('../2-controllers/articles.controller');
 const { method405 } = require('../4-errors/server-errors');
+
+articlesRouter.route('/').get(sendArticles);
 
 articlesRouter
   .route('/:article_id')
