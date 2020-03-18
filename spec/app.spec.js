@@ -20,6 +20,14 @@ describe('/api', () => {
         expect(res.body.error).to.equal('page not found');
       });
   });
+  it('ERROR:GET:404 returns an error message for route not found', () => {
+    return request(app)
+      .get('/api/not-a-route')
+      .expect(404)
+      .then(res => {
+        expect(res.body.error).to.equal('page not found');
+      });
+  });
   describe('/topics', () => {
     it('GET:200 returns an object containing an array of all topics', () => {
       return request(app)
@@ -186,6 +194,18 @@ describe('/api', () => {
         .then(res => {
           expect(res.body.articles).to.eql([]);
         });
+    });
+    it('ERROR:405 for invalid methods', () => {
+      const invalidMethods = ['patch', 'delete', 'put', 'post'];
+      const methodPromises = invalidMethods.map(method => {
+        return request(app)
+          [method]('/api/articles')
+          .expect(405)
+          .then(res => {
+            expect(res.body.error).to.equal('invalid method');
+          });
+      });
+      return Promise.all(methodPromises);
     });
     describe('/:article_id', () => {
       it('GET:200 returns an article object as specified by the article_id', () => {
@@ -406,6 +426,18 @@ describe('/api', () => {
               expect(res.body.error).to.equal('article not found');
             });
         });
+        it('ERROR:405 for invalid methods', () => {
+          const invalidMethods = ['patch', 'delete', 'put'];
+          const methodPromises = invalidMethods.map(method => {
+            return request(app)
+              [method]('/api/articles/3/comments')
+              .expect(405)
+              .then(res => {
+                expect(res.body.error).to.equal('invalid method');
+              });
+          });
+          return Promise.all(methodPromises);
+        });
       });
     });
   });
@@ -494,6 +526,18 @@ describe('/api', () => {
           .then(res => {
             expect(res.body.error).to.equal('comment not found');
           });
+      });
+      it('ERROR:405 for invalid methods', () => {
+        const invalidMethods = ['get', 'post', 'put'];
+        const methodPromises = invalidMethods.map(method => {
+          return request(app)
+            [method]('/api/comments/3')
+            .expect(405)
+            .then(res => {
+              expect(res.body.error).to.equal('invalid method');
+            });
+        });
+        return Promise.all(methodPromises);
       });
     });
   });

@@ -15,8 +15,4 @@ apiRouter.use('/users', usersRouter);
 apiRouter.use('/articles', articlesRouter);
 apiRouter.use('/comments', commentsRouter);
 
-// apiRouter.route('/*').all((err, req, res, next) => {
-//   res.status(404).send({ error: 'page not found' });
-// });
-
 module.exports = apiRouter;
