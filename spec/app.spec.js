@@ -474,6 +474,27 @@ describe('/api', () => {
             expect(res.body.error).to.equal('bad request');
           });
       });
+      it('DELETE:204 deletes a specific comment from the database', () => {
+        return request(app)
+          .delete('/api/comments/15')
+          .expect(204);
+      });
+      it('ERROR:DELETE:400 returns an error message when specified comment_id is invalid', () => {
+        return request(app)
+          .delete('/api/comments/not-valid')
+          .expect(400)
+          .then(res => {
+            expect(res.body.error).to.equal('bad request');
+          });
+      });
+      it('ERROR:DELETE:404 returns an error message when a specified comment_id does not exist', () => {
+        return request(app)
+          .delete('/api/comments/0')
+          .expect(404)
+          .then(res => {
+            expect(res.body.error).to.equal('comment not found');
+          });
+      });
     });
   });
 });
