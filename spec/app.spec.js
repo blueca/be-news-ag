@@ -77,124 +77,64 @@ describe('/api', () => {
       return Promise.all(methodPromises);
     });
   });
-  describe('/articles/:article_id', () => {
-    it('GET:200 returns an article object as specified by the article_id', () => {
-      return request(app)
-        .get('/api/articles/9')
-        .expect(200)
-        .then(res => {
-          expect(res.body.article).to.eql({
-            article_id: 9,
-            title: "They're not exactly dogs, are they?",
-            topic: 'mitch',
-            author: 'butter_bridge',
-            body: 'Well? Think about it.',
-            created_at: new Date(533132514171).toISOString(),
-            votes: 0,
-            comment_count: 2
-          });
-        });
-    });
-    it("ERROR:GET:404 returns an error message for an article which doesn't exist", () => {
-      return request(app)
-        .get('/api/articles/0')
-        .expect(404)
-        .then(res => {
-          expect(res.body.error).to.equal('article not found');
-        });
-    });
-    it('ERROR:GET:400 returns an error message for an invalid article_id', () => {
-      return request(app)
-        .get('/api/articles/not-valid')
-        .expect(400)
-        .then(res => {
-          expect(res.body.error).to.equal('bad request');
-        });
-    });
-    it('PATCH:200 updates the article based on request body, returns updated article', () => {
-      return request(app)
-        .patch('/api/articles/9')
-        .send({ inc_votes: 4 })
-        .expect(200)
-        .then(res => {
-          expect(res.body.article).to.eql({
-            article_id: 9,
-            title: "They're not exactly dogs, are they?",
-            topic: 'mitch',
-            author: 'butter_bridge',
-            body: 'Well? Think about it.',
-            created_at: new Date(533132514171).toISOString(),
-            votes: 4,
-            comment_count: 2
-          });
-        });
-    });
-    it("ERROR:PATCH:400 returns an error message when sent body doesn't have an inc_votes key", () => {
-      return request(app)
-        .patch('/api/articles/9')
-        .send({})
-        .expect(400)
-        .then(res => {
-          expect(res.body.error).to.equal('request is missing a required key');
-        });
-    });
-    it('ERROR:PATCH:400 returns an error message when body property is an invalid format', () => {
-      return request(app)
-        .patch('/api/articles/9')
-        .send({ inc_votes: 'not-valid' })
-        .expect(400)
-        .then(res => {
-          expect(res.body.error).to.equal('bad request');
-        });
-    });
-    it('ERROR:PATCH:400 returns an error message when body includes additional properties', () => {
-      return request(app)
-        .patch('/api/articles/9')
-        .send({ inc_votes: 4, name: 'Nick' })
-        .expect(400)
-        .then(res => {
-          expect(res.body.error).to.equal('request has too many properties');
-        });
-    });
-    it('ERROR:405 for invalid methods', () => {
-      const invalidMethods = ['post', 'delete', 'put'];
-      const methodPromises = invalidMethods.map(method => {
+  describe('/articles', () => {
+    it('', () => {});
+    describe('/:article_id', () => {
+      it('GET:200 returns an article object as specified by the article_id', () => {
         return request(app)
-          [method]('/api/articles/2')
-          .expect(405)
+          .get('/api/articles/9')
+          .expect(200)
           .then(res => {
-            expect(res.body.error).to.equal('invalid method');
+            expect(res.body.article).to.eql({
+              article_id: 9,
+              title: "They're not exactly dogs, are they?",
+              topic: 'mitch',
+              author: 'butter_bridge',
+              body: 'Well? Think about it.',
+              created_at: new Date(533132514171).toISOString(),
+              votes: 0,
+              comment_count: '2'
+            });
           });
       });
-      return Promise.all(methodPromises);
-    });
-    describe('/comments', () => {
-      it('POST:201 adds a comment and returns the new comment', () => {
+      it("ERROR:GET:404 returns an error message for an article which doesn't exist", () => {
         return request(app)
-          .post('/api/articles/9/comments')
-          .send({ username: 'lurker', body: 'adding a new comment' })
-          .expect(201)
+          .get('/api/articles/0')
+          .expect(404)
           .then(res => {
-            expect(res.body.comment).to.have.all.keys([
-              'comment_id',
-              'author',
-              'article_id',
-              'votes',
-              'created_at',
-              'body'
-            ]);
-            expect(res.body.comment.comment_id).to.equal(19);
-            expect(res.body.comment.author).to.equal('lurker');
-            expect(res.body.comment.article_id).to.equal(9);
-            expect(res.body.comment.body).to.equal('adding a new comment');
+            expect(res.body.error).to.equal('article not found');
           });
       });
-      it('ERROR:POST:400 returns an error message when sent body is missing a required property', () => {
+      it('ERROR:GET:400 returns an error message for an invalid article_id', () => {
         return request(app)
-          .post('/api/articles/9/comments')
-          .send({
-            body: "this comment object doesn't have a username property"
-          })
+          .get('/api/articles/not-valid')
+          .expect(400)
+          .then(res => {
+            expect(res.body.error).to.equal('bad request');
+          });
+      });
+      it('PATCH:200 updates the article based on request body, returns updated article', () => {
+        return request(app)
+          .patch('/api/articles/9')
+          .send({ inc_votes: 4 })
+          .expect(200)
+          .then(res => {
+            expect(res.body.article).to.eql({
+              article_id: 9,
+              title: "They're not exactly dogs, are they?",
+              topic: 'mitch',
+              author: 'butter_bridge',
+              body: 'Well? Think about it.',
+              created_at: new Date(533132514171).toISOString(),
+              votes: 4,
+              comment_count: '2'
+            });
+          });
+      });
+      it("ERROR:PATCH:400 returns an error message when sent body doesn't have an inc_votes key", () => {
+        return request(app)
+          .patch('/api/articles/9')
+          .send({})
           .expect(400)
           .then(res => {
             expect(res.body.error).to.equal(
@@ -202,71 +142,162 @@ describe('/api', () => {
             );
           });
       });
-      it('ERROR:POST:400 returns an error message when body includes additional parameters', () => {
+      it('ERROR:PATCH:400 returns an error message when body property is an invalid format', () => {
         return request(app)
-          .post('/api/articles/9/comments')
-          .send({
-            username: 'lurker',
-            body: 'this is the comment',
-            article_id: 4
-          })
+          .patch('/api/articles/9')
+          .send({ inc_votes: 'not-valid' })
+          .expect(400)
+          .then(res => {
+            expect(res.body.error).to.equal('bad request');
+          });
+      });
+      it('ERROR:PATCH:400 returns an error message when body includes additional properties', () => {
+        return request(app)
+          .patch('/api/articles/9')
+          .send({ inc_votes: 4, name: 'Nick' })
           .expect(400)
           .then(res => {
             expect(res.body.error).to.equal('request has too many properties');
           });
       });
-      it('ERROR:POST:400 returns an error message when body includes a username which is not in the usernames table', () => {
-        return request(app)
-          .post('/api/articles/9/comments')
-          .send({
-            username: 'notintable',
-            body: 'this is the comment'
-          })
-          .expect(400)
-          .then(res => {
-            expect(res.body.error).to.equal('username not found');
-          });
+      it('ERROR:405 for invalid methods', () => {
+        const invalidMethods = ['post', 'delete', 'put'];
+        const methodPromises = invalidMethods.map(method => {
+          return request(app)
+            [method]('/api/articles/2')
+            .expect(405)
+            .then(res => {
+              expect(res.body.error).to.equal('invalid method');
+            });
+        });
+        return Promise.all(methodPromises);
       });
-      it('GET:200 returns an array of comments for a particular article_id, by default sorted by created_at, desc', () => {
-        return request(app)
-          .get('/api/articles/9/comments')
-          .expect(200)
-          .then(res => {
-            expect(res.body.comments[0]).to.have.all.keys([
-              'comment_id',
-              'author',
-              'votes',
-              'created_at',
-              'body'
-            ]);
-            expect(res.body.comments[0].author).to.equal('butter_bridge');
-            expect(res.body.comments.length).to.equal(2);
-            expect(res.body.comments).to.be.descendingBy('created_at');
-          });
-      });
-      it('GET:200 returns an array of comments for an article_id, sorted by the specified query', () => {
-        return request(app)
-          .get('/api/articles/1/comments?sort_by=votes')
-          .expect(200)
-          .then(res => {
-            expect(res.body.comments).to.be.descendingBy('votes');
-          });
-      });
-      it('GET:200 returns an array of comments for an article_id, with sort order specified by the query', () => {
-        return request(app)
-          .get('/api/articles/1/comments?order=asc')
-          .expect(200)
-          .then(res => {
-            expect(res.body.comments).to.be.ascendingBy('created_at');
-          });
-      });
-      it('GET:200 returns an array of comments sorted correctly when passed a sort_by and order query', () => {
-        return request(app)
-          .get('/api/articles/1/comments?sort_by=votes&order=asc')
-          .expect(200)
-          .then(res => {
-            expect(res.body.comments).to.be.ascendingBy('votes');
-          });
+      describe('/comments', () => {
+        it('POST:201 adds a comment and returns the new comment', () => {
+          return request(app)
+            .post('/api/articles/9/comments')
+            .send({ username: 'lurker', body: 'adding a new comment' })
+            .expect(201)
+            .then(res => {
+              expect(res.body.comment).to.have.all.keys([
+                'comment_id',
+                'author',
+                'article_id',
+                'votes',
+                'created_at',
+                'body'
+              ]);
+              expect(res.body.comment.comment_id).to.equal(19);
+              expect(res.body.comment.author).to.equal('lurker');
+              expect(res.body.comment.article_id).to.equal(9);
+              expect(res.body.comment.body).to.equal('adding a new comment');
+            });
+        });
+        it('ERROR:POST:400 returns an error message when sent body is missing a required property', () => {
+          return request(app)
+            .post('/api/articles/9/comments')
+            .send({
+              body: "this comment object doesn't have a username property"
+            })
+            .expect(400)
+            .then(res => {
+              expect(res.body.error).to.equal(
+                'request is missing a required key'
+              );
+            });
+        });
+        it('ERROR:POST:400 returns an error message when body includes additional parameters', () => {
+          return request(app)
+            .post('/api/articles/9/comments')
+            .send({
+              username: 'lurker',
+              body: 'this is the comment',
+              article_id: 4
+            })
+            .expect(400)
+            .then(res => {
+              expect(res.body.error).to.equal(
+                'request has too many properties'
+              );
+            });
+        });
+        it('ERROR:POST:400 returns an error message when body includes a username which is not in the usernames table', () => {
+          return request(app)
+            .post('/api/articles/9/comments')
+            .send({
+              username: 'notintable',
+              body: 'this is the comment'
+            })
+            .expect(400)
+            .then(res => {
+              expect(res.body.error).to.equal('username not found');
+            });
+        });
+        it('GET:200 returns an array of comments for a particular article_id, by default sorted by created_at, desc', () => {
+          return request(app)
+            .get('/api/articles/9/comments')
+            .expect(200)
+            .then(res => {
+              expect(res.body.comments[0]).to.have.all.keys([
+                'comment_id',
+                'author',
+                'votes',
+                'created_at',
+                'body'
+              ]);
+              expect(res.body.comments[0].author).to.equal('butter_bridge');
+              expect(res.body.comments.length).to.equal(2);
+              expect(res.body.comments).to.be.descendingBy('created_at');
+            });
+        });
+        it('GET:200 returns an array of comments for an article_id, sorted by the specified query', () => {
+          return request(app)
+            .get('/api/articles/1/comments?sort_by=votes')
+            .expect(200)
+            .then(res => {
+              expect(res.body.comments).to.be.descendingBy('votes');
+            });
+        });
+        it('GET:200 returns an array of comments for an article_id, with sort order specified by the query', () => {
+          return request(app)
+            .get('/api/articles/1/comments?order=asc')
+            .expect(200)
+            .then(res => {
+              expect(res.body.comments).to.be.ascendingBy('created_at');
+            });
+        });
+        it('GET:200 returns an array of comments sorted correctly when passed a sort_by and order query', () => {
+          return request(app)
+            .get('/api/articles/1/comments?sort_by=votes&order=asc')
+            .expect(200)
+            .then(res => {
+              expect(res.body.comments).to.be.ascendingBy('votes');
+            });
+        });
+        it('GET:200 returns an empty array when an article has no comments', () => {
+          return request(app)
+            .get('/api/articles/2/comments')
+            .expect(200)
+            .then(res => {
+              expect(res.body.comments).to.have.lengthOf(0);
+            });
+        });
+        it('ERROR:GET:400 returns an error message for an article with an invalid id', () => {
+          return request(app)
+            .get('/api/articles/not-valid/comments')
+            .expect(400)
+            .then(res => {
+              expect(res.body.error).to.equal('bad request');
+            });
+        });
+        it("ERROR:GET:404 returns an error message for an article which doesn't exist", () => {
+          return request(app)
+            .get('/api/articles/0/comments')
+            .expect(404)
+            .then(res => {
+              expect(res.body.error).to.equal('article not found');
+            });
+        });
       });
     });
   });

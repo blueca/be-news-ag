@@ -1,26 +1,22 @@
 const knex = require('../db/connection');
 
 exports.fetchArticle = article_id => {
-  const articleDetails = knex('articles')
-    .select()
-    .where({ article_id })
+  return knex
+    .select('articles.*')
+    .from('articles')
+    .count({ comment_count: 'comment_id' })
+    .where({ 'articles.article_id': article_id })
+    .leftJoin('comments', 'articles.article_id', 'comments.article_id')
+    .groupBy('articles.article_id')
     .then(article => {
-      return article.length > 0 ? article[0] : Promise.reject('noArticle');
+      if (article.length > 0) {
+        return article[0];
+      } else if (article.length === 0) {
+        return Promise.reject('noArticle');
+      } else {
+        return Promise.reject('extraArticle');
+      }
     });
-  const commentCount = knex('comments')
-    .count()
-    .where({ article_id })
-    .then(res => {
-      return res[0].count;
-    });
-
-  return Promise.all([articleDetails, commentCount]).then(
-    ([articleDetails, commentCount]) => {
-      const article = { ...articleDetails };
-      article.comment_count = parseInt(commentCount);
-      return article;
-    }
-  );
 };
 
 exports.incrementArticleVotes = (article_id, votes) => {
@@ -60,8 +56,18 @@ exports.insertComment = (article_id, body) => {
 exports.fetchComments = (params, query) => {
   const { article_id } = params;
   const { sort_by = 'created_at', order = 'desc' } = query;
-  return knex('comments')
-    .select('comment_id', 'author', 'votes', 'created_at', 'body')
+
+  return knex('articles')
+    .select('article_id')
     .where({ article_id })
-    .orderBy(sort_by, order);
+    .then(articles => {
+      if (articles.length > 0) {
+        return knex('comments')
+          .select('comment_id', 'author', 'votes', 'created_at', 'body')
+          .where({ article_id })
+          .orderBy(sort_by, order);
+      } else {
+        return Promise.reject('noArticle');
+      }
+    });
 };

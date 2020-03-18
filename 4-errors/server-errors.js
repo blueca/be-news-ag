@@ -5,7 +5,8 @@ exports.serverErrors = (err, req, res, next) => {
     noUser: { status: 404, msg: 'username not found' },
     noArticle: { status: 404, msg: 'article not found' },
     noKey: { status: 400, msg: 'request is missing a required key' },
-    extraKey: { status: 400, msg: 'request has too many properties' }
+    extraKey: { status: 400, msg: 'request has too many properties' },
+    extraArticle: { status: 400, msg: 'extra articles returned somehow' }
   };
 
   if (err in errors) {
