@@ -171,20 +171,20 @@ describe('/api', () => {
           expect(res.body.error).to.equal('topic does not exist');
         });
     });
-    it('ERROR:GET:404 returns error when filtering by a topic with zero articles', () => {
+    it('ERROR:GET:204 returns error when filtering by a topic with zero articles', () => {
       return request(app)
         .get('/api/articles?topic=paper')
-        .expect(404)
+        .expect(204)
         .then(res => {
-          expect(res.body.error).to.equal('no articles found');
+          expect(res.body).to.eql({});
         });
     });
-    it('ERROR:GET:404 returns error when filtering by an author with zero articles', () => {
+    it('ERROR:GET:204 returns error when filtering by an author with zero articles', () => {
       return request(app)
         .get('/api/articles?author=lurker')
-        .expect(404)
+        .expect(204)
         .then(res => {
-          expect(res.body.error).to.equal('no articles found');
+          expect(res.body).to.eql({});
         });
     });
     describe('/:article_id', () => {
@@ -406,6 +406,26 @@ describe('/api', () => {
               expect(res.body.error).to.equal('article not found');
             });
         });
+      });
+    });
+  });
+  describe('/comments', () => {
+    describe('/:comment_id', () => {
+      it('PATCH:200 updates the comment based on the request body, returns the updated comment', () => {
+        return request(app)
+          .patch('/api/comments/15')
+          .send({ inc_votes: 5 })
+          .expect(200)
+          .then(res => {
+            expect(res.body.comment).to.eql({
+              comment_id: 15,
+              body: "I am 100% sure that we're not completely sure.",
+              article_id: 5,
+              author: 'butter_bridge',
+              votes: 6,
+              created_at: new Date(1069850163389).toISOString()
+            });
+          });
       });
     });
   });
