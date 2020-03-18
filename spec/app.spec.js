@@ -227,7 +227,7 @@ describe('/api', () => {
             expect(res.body.error).to.equal('username not found');
           });
       });
-      it('GET:200 returns an array of comments for a particular article_id. by default sorted by created_at, desc', () => {
+      it('GET:200 returns an array of comments for a particular article_id, by default sorted by created_at, desc', () => {
         return request(app)
           .get('/api/articles/9/comments')
           .expect(200)
@@ -242,6 +242,30 @@ describe('/api', () => {
             expect(res.body.comments[0].author).to.equal('butter_bridge');
             expect(res.body.comments.length).to.equal(2);
             expect(res.body.comments).to.be.descendingBy('created_at');
+          });
+      });
+      it('GET:200 returns an array of comments for an article_id, sorted by the specified query', () => {
+        return request(app)
+          .get('/api/articles/1/comments?sort_by=votes')
+          .expect(200)
+          .then(res => {
+            expect(res.body.comments).to.be.descendingBy('votes');
+          });
+      });
+      it('GET:200 returns an array of comments for an article_id, with sort order specified by the query', () => {
+        return request(app)
+          .get('/api/articles/1/comments?order=asc')
+          .expect(200)
+          .then(res => {
+            expect(res.body.comments).to.be.ascendingBy('created_at');
+          });
+      });
+      it('GET:200 returns an array of comments sorted correctly when passed a sort_by and order query', () => {
+        return request(app)
+          .get('/api/articles/1/comments?sort_by=votes&order=asc')
+          .expect(200)
+          .then(res => {
+            expect(res.body.comments).to.be.ascendingBy('votes');
           });
       });
     });

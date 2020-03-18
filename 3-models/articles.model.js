@@ -57,10 +57,11 @@ exports.insertComment = (article_id, body) => {
   }
 };
 
-exports.fetchComments = params => {
+exports.fetchComments = (params, query) => {
   const { article_id } = params;
+  const { sort_by = 'created_at', order = 'desc' } = query;
   return knex('comments')
     .select('comment_id', 'author', 'votes', 'created_at', 'body')
     .where({ article_id })
-    .orderBy('created_at', 'desc');
+    .orderBy(sort_by, order);
 };
