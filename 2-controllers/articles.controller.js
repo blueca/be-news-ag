@@ -39,7 +39,7 @@ exports.sendComments = (req, res, next) => {
 };
 
 exports.sendArticles = (req, res, next) => {
-  fetchArticles().then(articles => {
+  fetchArticles(req.query).then(articles => {
     res.status(200).send({ articles });
   });
 };

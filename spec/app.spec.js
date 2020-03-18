@@ -78,7 +78,7 @@ describe('/api', () => {
     });
   });
   describe('/articles', () => {
-    it('GET:200 returns an object containing an array of all articles', () => {
+    it('GET:200 returns an object containing an array of all articles, by default sorted by date in desc order', () => {
       return request(app)
         .get('/api/articles')
         .expect(200)
@@ -93,6 +93,31 @@ describe('/api', () => {
             'votes',
             'comment_count'
           ]);
+          expect(res.body.articles).to.be.descendingBy('created_at');
+        });
+    });
+    it('GET:200 accepts sort_by query', () => {
+      return request(app)
+        .get('/api/articles?sort_by=comment_count')
+        .expect(200)
+        .then(res => {
+          expect(res.body.articles).to.be.descendingBy('comment_count');
+        });
+    });
+    it('GET:200 accepts order query', () => {
+      return request(app)
+        .get('/api/articles?order=asc')
+        .expect(200)
+        .then(res => {
+          expect(res.body.articles).to.be.ascendingBy('created_at');
+        });
+    });
+    it('GET:200 returns correctly when passed both sory_by and order queries', () => {
+      return request(app)
+        .get('/api/articles?order=asc&sort_by=comment_count')
+        .expect(200)
+        .then(res => {
+          expect(res.body.articles).to.be.ascendingBy('comment_count');
         });
     });
     describe('/:article_id', () => {
@@ -109,7 +134,7 @@ describe('/api', () => {
               body: 'Well? Think about it.',
               created_at: new Date(533132514171).toISOString(),
               votes: 0,
-              comment_count: '2'
+              comment_count: 2
             });
           });
       });
@@ -143,7 +168,7 @@ describe('/api', () => {
               body: 'Well? Think about it.',
               created_at: new Date(533132514171).toISOString(),
               votes: 4,
-              comment_count: '2'
+              comment_count: 2
             });
           });
       });

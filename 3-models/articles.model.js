@@ -10,7 +10,10 @@ exports.fetchArticle = article_id => {
     .groupBy('articles.article_id')
     .then(article => {
       if (article.length > 0) {
-        return article[0];
+        nArticle = { ...article[0] };
+        nArticle.comment_count = parseInt(nArticle.comment_count);
+
+        return nArticle;
       } else if (article.length === 0) {
         return Promise.reject('noArticle');
       } else {
@@ -72,7 +75,9 @@ exports.fetchComments = (params, query) => {
     });
 };
 
-exports.fetchArticles = () => {
+exports.fetchArticles = queries => {
+  const { sort_by = 'created_at', order = 'desc' } = queries;
+
   return knex
     .select(
       'articles.author',
@@ -86,7 +91,14 @@ exports.fetchArticles = () => {
     .count({ comment_count: 'comment_id' })
     .leftJoin('comments', 'articles.article_id', 'comments.article_id')
     .groupBy('articles.article_id')
+    .orderBy(sort_by, order)
     .then(articles => {
-      return articles;
+      const nArticles = articles.map(article => {
+        nArticle = { ...article };
+        nArticle.comment_count = parseInt(nArticle.comment_count);
+
+        return nArticle;
+      });
+      return nArticles;
     });
 };
