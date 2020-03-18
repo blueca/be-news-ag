@@ -171,6 +171,22 @@ describe('/api', () => {
           expect(res.body.error).to.equal('topic does not exist');
         });
     });
+    it('ERROR:GET:404 returns error when filtering by a topic with zero articles', () => {
+      return request(app)
+        .get('/api/articles?topic=paper')
+        .expect(404)
+        .then(res => {
+          expect(res.body.error).to.equal('no articles found');
+        });
+    });
+    it('ERROR:GET:404 returns error when filtering by an author with zero articles', () => {
+      return request(app)
+        .get('/api/articles?author=lurker')
+        .expect(404)
+        .then(res => {
+          expect(res.body.error).to.equal('no articles found');
+        });
+    });
     describe('/:article_id', () => {
       it('GET:200 returns an article object as specified by the article_id', () => {
         return request(app)

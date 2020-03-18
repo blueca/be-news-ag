@@ -136,7 +136,8 @@ exports.fetchArticles = queries => {
 
           return nArticle;
         });
-        return nArticles;
+
+        return nArticles.length > 0 ? nArticles : Promise.reject('noArticles');
       });
   });
 };
