@@ -227,7 +227,7 @@ describe('/api', () => {
             expect(res.body.error).to.equal('username not found');
           });
       });
-      it('GET:200 returns an array of comments for a particular article_id', () => {
+      it('GET:200 returns an array of comments for a particular article_id. by default sorted by created_at, desc', () => {
         return request(app)
           .get('/api/articles/9/comments')
           .expect(200)
@@ -239,6 +239,9 @@ describe('/api', () => {
               'created_at',
               'body'
             ]);
+            expect(res.body.comments[0].author).to.equal('butter_bridge');
+            expect(res.body.comments.length).to.equal(2);
+            expect(res.body.comments).to.be.descendingBy('created_at');
           });
       });
     });
