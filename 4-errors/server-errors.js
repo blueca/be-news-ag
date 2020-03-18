@@ -7,7 +7,9 @@ exports.serverErrors = (err, req, res, next) => {
     noKey: { status: 400, msg: 'request is missing a required key' },
     extraKey: { status: 400, msg: 'request has too many properties' },
     extraArticle: { status: 400, msg: 'extra articles returned somehow' },
-    badOrder: { status: 400, msg: 'invalid order' }
+    badOrder: { status: 400, msg: 'invalid sort order' },
+    noAuthor: { status: 400, msg: 'author does not exist' },
+    noTopic: { status: 400, msg: 'topic does not exist' }
   };
 
   if (err in errors) {

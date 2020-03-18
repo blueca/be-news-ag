@@ -76,33 +76,67 @@ exports.fetchComments = (params, query) => {
 };
 
 exports.fetchArticles = queries => {
-  let { sort_by = 'created_at', order = 'desc' } = queries;
+  let { sort_by = 'created_at', order = 'desc', author, topic } = queries;
 
   if (order !== 'desc' && order !== 'asc') {
-    order = 'desc';
+    return Promise.reject('badOrder');
   }
 
-  return knex
-    .select(
-      'articles.author',
-      'articles.title',
-      'articles.article_id',
-      'articles.topic',
-      'articles.created_at',
-      'articles.votes'
-    )
-    .from('articles')
-    .count({ comment_count: 'comment_id' })
-    .leftJoin('comments', 'articles.article_id', 'comments.article_id')
-    .groupBy('articles.article_id')
-    .orderBy(sort_by, order)
-    .then(articles => {
-      const nArticles = articles.map(article => {
-        nArticle = { ...article };
-        nArticle.comment_count = parseInt(nArticle.comment_count);
-
-        return nArticle;
-      });
-      return nArticles;
+  const users = knex('users')
+    .select('username')
+    .then(users => {
+      if (
+        author !== undefined &&
+        users.filter(user => user.username === author).length === 0
+      ) {
+        return Promise.reject('noAuthor');
+      }
     });
+
+  const topics = knex('topics')
+    .select('slug')
+    .then(topics => {
+      if (
+        topic !== undefined &&
+        topics.filter(dbtopic => dbtopic.slug === topic).length === 0
+      ) {
+        return Promise.reject('noTopic');
+      }
+    });
+
+  return Promise.all([users, topics]).then(() => {
+    return knex
+      .select(
+        'articles.author',
+        'articles.title',
+        'articles.article_id',
+        'articles.topic',
+        'articles.created_at',
+        'articles.votes'
+      )
+      .from('articles')
+      .count({ comment_count: 'comment_id' })
+      .leftJoin('comments', 'articles.article_id', 'comments.article_id')
+      .groupBy('articles.article_id')
+      .modify(qb => {
+        if (author !== undefined) {
+          qb.where({ 'articles.author': author });
+        }
+      })
+      .modify(qb => {
+        if (topic !== undefined) {
+          qb.where({ 'articles.topic': topic });
+        }
+      })
+      .orderBy(sort_by, order)
+      .then(articles => {
+        const nArticles = articles.map(article => {
+          nArticle = { ...article };
+          nArticle.comment_count = parseInt(nArticle.comment_count);
+
+          return nArticle;
+        });
+        return nArticles;
+      });
+  });
 };

@@ -128,12 +128,47 @@ describe('/api', () => {
           expect(res.body.error).to.equal('invalid data in query');
         });
     });
-    it('GET:200 when passed an order query other than asc/desc, uses default order', () => {
+    it('ERROR:GET:400 when passed an order query other than asc/desc, sends error message', () => {
       return request(app)
         .get('/api/articles?order=bad')
+        .expect(400)
+        .then(res => {
+          expect(res.body.error).to.equal('invalid sort order');
+        });
+    });
+    it('GET:200 returns a filtered list of articles when passed an author query', () => {
+      return request(app)
+        .get('/api/articles?author=icellusedkars')
         .expect(200)
         .then(res => {
-          expect(res.body.articles).to.be.descendingBy('created_at');
+          expect(res.body.articles).to.have.lengthOf(6);
+          res.body.articles.forEach(article => {
+            expect(article.author).to.equal('icellusedkars');
+          });
+        });
+    });
+    it('GET:200 returns a filtered list of articles when passed a topic query', () => {
+      return request(app)
+        .get('/api/articles?topic=mitch')
+        .expect(200)
+        .then(res => {
+          expect(res.body.articles).to.have.lengthOf(11);
+        });
+    });
+    it('ERROR:GET:400 returns error when filtering by an author who is not in the database', () => {
+      return request(app)
+        .get('/api/articles?author=notInDatabase')
+        .expect(400)
+        .then(res => {
+          expect(res.body.error).to.equal('author does not exist');
+        });
+    });
+    it('ERROR:GET:400 returns error when filtering by a topic which is not in the database', () => {
+      return request(app)
+        .get('/api/articles?topic=notInDatabase')
+        .expect(400)
+        .then(res => {
+          expect(res.body.error).to.equal('topic does not exist');
         });
     });
     describe('/:article_id', () => {
