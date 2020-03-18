@@ -11,7 +11,7 @@ exports.incrementCommentVotes = (comment_id, body) => {
       .increment({ votes: body.inc_votes })
       .returning('*')
       .then(comment => {
-        return comment[0];
+        return comment.length > 0 ? comment[0] : Promise.reject('noComment');
       });
   }
 };

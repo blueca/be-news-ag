@@ -10,7 +10,8 @@ exports.serverErrors = (err, req, res, next) => {
     badOrder: { status: 400, msg: 'invalid sort order' },
     noAuthor: { status: 400, msg: 'author does not exist' },
     noTopic: { status: 400, msg: 'topic does not exist' },
-    noArticles: { status: 404, msg: 'no articles found' }
+    noArticles: { status: 404, msg: 'no articles found' },
+    noComment: { status: 404, msg: 'comment not found' }
   };
 
   if (err in errors) {

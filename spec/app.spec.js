@@ -171,20 +171,20 @@ describe('/api', () => {
           expect(res.body.error).to.equal('topic does not exist');
         });
     });
-    it('ERROR:GET:204 returns error when filtering by a topic with zero articles', () => {
+    it('GET:200 returns an empty array when a valid topic has no articles', () => {
       return request(app)
         .get('/api/articles?topic=paper')
-        .expect(204)
+        .expect(200)
         .then(res => {
-          expect(res.body).to.eql({});
+          expect(res.body.articles).to.eql([]);
         });
     });
-    it('ERROR:GET:204 returns error when filtering by an author with zero articles', () => {
+    it('GET:200 returns an empty array when a valid author has no articles', () => {
       return request(app)
         .get('/api/articles?author=lurker')
-        .expect(204)
+        .expect(200)
         .then(res => {
-          expect(res.body).to.eql({});
+          expect(res.body.articles).to.eql([]);
         });
     });
     describe('/:article_id', () => {
@@ -454,6 +454,24 @@ describe('/api', () => {
           .expect(400)
           .then(res => {
             expect(res.body.error).to.equal('request has too many properties');
+          });
+      });
+      it('ERROR:PATCH:404 returns an error message when url contains a comment id which has no comment', () => {
+        return request(app)
+          .patch('/api/comments/0')
+          .send({ inc_votes: 4 })
+          .expect(404)
+          .then(res => {
+            expect(res.body.error).to.equal('comment not found');
+          });
+      });
+      it('ERROR:PATCH:400 returns an error message when url contains an invalid comment_id', () => {
+        return request(app)
+          .patch('/api/comments/not-valid')
+          .send({ inc_votes: 4 })
+          .expect(400)
+          .then(res => {
+            expect(res.body.error).to.equal('bad request');
           });
       });
     });
