@@ -427,6 +427,35 @@ describe('/api', () => {
             });
           });
       });
+      it("ERROR:PATCH:400 returns an error message when sent body doesn't have an inc_votes key", () => {
+        return request(app)
+          .patch('/api/comments/15')
+          .send({})
+          .expect(400)
+          .then(res => {
+            expect(res.body.error).to.equal(
+              'request is missing a required key'
+            );
+          });
+      });
+      it('ERROR:PATCH:400 returns an error message when body property is an invlaid format', () => {
+        return request(app)
+          .patch('/api/comments/15')
+          .send({ inc_votes: 'not-valid' })
+          .expect(400)
+          .then(res => {
+            expect(res.body.error).to.equal('bad request');
+          });
+      });
+      it('ERROR:PATCH:400 returns an error message when body includes additional properties', () => {
+        return request(app)
+          .patch('/api/comments/15')
+          .send({ inc_votes: 4, name: 'Nick' })
+          .expect(400)
+          .then(res => {
+            expect(res.body.error).to.equal('request has too many properties');
+          });
+      });
     });
   });
 });
