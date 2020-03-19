@@ -1,4 +1,5 @@
 const knex = require('../db/connection');
+const { checkExists } = require('../db/utils/utils');
 
 exports.fetchArticle = article_id => {
   return knex
@@ -9,16 +10,21 @@ exports.fetchArticle = article_id => {
     .leftJoin('comments', 'articles.article_id', 'comments.article_id')
     .groupBy('articles.article_id')
     .then(article => {
-      if (article.length > 0) {
-        nArticle = { ...article[0] };
-        nArticle.comment_count = parseInt(nArticle.comment_count);
+      nArticle = { ...article[0] };
+      nArticle.comment_count = parseInt(nArticle.comment_count);
 
-        return nArticle;
-      } else if (article.length === 0) {
-        return Promise.reject('noArticle');
+      if (article.length) {
+        return [true, nArticle];
       } else {
-        return Promise.reject('extraArticle');
+        return Promise.all([
+          checkExists('articles', 'article_id', article_id),
+          nArticle
+        ]);
       }
+    })
+    .then(([articleExists, article]) => {
+      if (articleExists) return article;
+      else return Promise.reject('noArticle');
     });
 };
 

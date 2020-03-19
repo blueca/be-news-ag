@@ -1,3 +1,5 @@
+const knex = require('../connection');
+
 exports.formatDates = list => {
   const nArr = list.map(obj => {
     const nObj = { ...obj };
@@ -32,4 +34,11 @@ exports.formatComments = (comments, articleRef) => {
   });
 
   return this.formatDates(nArr);
+};
+
+exports.checkExists = (table, column, query) => {
+  return knex(table)
+    .select()
+    .where({ [column]: query })
+    .first();
 };

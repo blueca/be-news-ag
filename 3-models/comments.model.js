@@ -19,12 +19,9 @@ exports.incrementCommentVotes = (comment_id, body) => {
 exports.delComment = comment_id => {
   return knex('comments')
     .where({ comment_id })
-    .then(comments => {
-      if (comments.length > 0) {
-        return knex('comments')
-          .where({ comment_id })
-          .del();
-      } else {
+    .del()
+    .then(res => {
+      if (!res) {
         return Promise.reject('noComment');
       }
     });
