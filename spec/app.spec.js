@@ -426,6 +426,22 @@ describe('/api', () => {
               expect(res.body.error).to.equal('article not found');
             });
         });
+        it('ERROR:GET:400 returns error message when sort_by query is given a nonexistent column', () => {
+          return request(app)
+            .get('/api/articles/1/comments?sort_by=not_a_column')
+            .expect(400)
+            .then(res => {
+              expect(res.body.error).to.equal('invalid data in query');
+            });
+        });
+        it('ERROR:GET:400 when passed an order query other than asc/desc, sends error message', () => {
+          return request(app)
+            .get('/api/articles/1/comments?order=bad')
+            .expect(400)
+            .then(res => {
+              expect(res.body.error).to.equal('invalid sort order');
+            });
+        });
         it('ERROR:405 for invalid methods', () => {
           const invalidMethods = ['patch', 'delete', 'put'];
           const methodPromises = invalidMethods.map(method => {

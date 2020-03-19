@@ -60,6 +60,10 @@ exports.fetchComments = (params, query) => {
   const { article_id } = params;
   const { sort_by = 'created_at', order = 'desc' } = query;
 
+  if (order !== 'desc' && order !== 'asc') {
+    return Promise.reject('badOrder');
+  }
+
   return knex('articles')
     .select('article_id')
     .where({ article_id })
