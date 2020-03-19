@@ -30,7 +30,6 @@ exports.incrementArticleVotes = (article_id, votes) => {
       .where({ article_id })
       .increment({ votes: votes.inc_votes })
       .then(() => {
-        // didn't use .returning('*') as I assume the updated article which gets returned should have a comment count
         return this.fetchArticle(article_id);
       });
   }
@@ -121,8 +120,6 @@ exports.fetchArticles = queries => {
         .then(articles => {
           articles.forEach(article => {
             article.comment_count = parseInt(article.comment_count);
-
-            // return article;
           });
           return articles;
         });

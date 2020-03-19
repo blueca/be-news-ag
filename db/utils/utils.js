@@ -9,6 +9,7 @@ exports.formatDates = list => {
     }
     return nObj;
   });
+
   return nArr;
 };
 
