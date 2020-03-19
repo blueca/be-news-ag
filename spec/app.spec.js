@@ -369,6 +369,14 @@ describe('/api', () => {
               expect(res.body.error).to.equal('article not found');
             });
         });
+        it('ERROR:POST:400 returns an error message when the specified article is not a valid id', () => {
+          return request(app)
+            .post('/api/articles/not-valid/comments')
+            .expect(400)
+            .then(res => {
+              expect(res.body.error).to.equal('bad request');
+            });
+        });
         it('GET:200 returns an array of comments for a particular article_id, by default sorted by created_at, desc', () => {
           return request(app)
             .get('/api/articles/9/comments')

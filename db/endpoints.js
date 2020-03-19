@@ -1,4 +1,4 @@
-exports.endpoints = {
+exports.endpointsOld = {
   '/api': {
     '/topics': { methods: ['GET'] },
     '/users': { '/:username': { methods: ['GET'] } },
@@ -10,5 +10,19 @@ exports.endpoints = {
       }
     },
     '/comments': { '/:comment_id': { methods: ['PATCH', 'DELETE'] } }
+  }
+};
+
+exports.endpoints = {
+  'GET /api': {
+    description:
+      'serves a json representation of all the available endpoints of the api'
+  },
+  'GET /api/topics': {
+    description: 'serves an array of all topics',
+    queries: null,
+    exampleResponse: {
+      topics: [{ slug: 'coding', description: 'Code is love, code is life' }]
+    }
   }
 };
