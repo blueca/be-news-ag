@@ -3,12 +3,13 @@ const topicsRouter = require('./topics.router');
 const usersRouter = require('./users.router');
 const articlesRouter = require('./articles.router');
 const commentsRouter = require('./comments.router');
+const { sendEndpoints } = require('../2-controllers/api.controller');
+const { method405 } = require('../4-errors/server-errors');
 
-apiRouter.get('/', (req, res, next) => {
-  res.status(200).send({
-    msg: 'placeholder'
-  });
-});
+apiRouter
+  .route('/')
+  .get(sendEndpoints)
+  .all(method405);
 
 apiRouter.use('/topics', topicsRouter);
 apiRouter.use('/users', usersRouter);
