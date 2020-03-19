@@ -166,7 +166,7 @@ describe('/api', () => {
     it('ERROR:GET:400 returns error when filtering by an author who is not in the database', () => {
       return request(app)
         .get('/api/articles?author=notInDatabase')
-        .expect(400)
+        .expect(404)
         .then(res => {
           expect(res.body.error).to.equal('author does not exist');
         });
@@ -174,7 +174,7 @@ describe('/api', () => {
     it('ERROR:GET:400 returns error when filtering by a topic which is not in the database', () => {
       return request(app)
         .get('/api/articles?topic=notInDatabase')
-        .expect(400)
+        .expect(404)
         .then(res => {
           expect(res.body.error).to.equal('topic does not exist');
         });
@@ -359,6 +359,14 @@ describe('/api', () => {
             .expect(400)
             .then(res => {
               expect(res.body.error).to.equal('username not found');
+            });
+        });
+        it("ERROR:POST:404 returns an error message when the specified article is valid but doesn't exist", () => {
+          return request(app)
+            .post('/api/articles/0/comments')
+            .expect(404)
+            .then(res => {
+              expect(res.body.error).to.equal('article not found');
             });
         });
         it('GET:200 returns an array of comments for a particular article_id, by default sorted by created_at, desc', () => {

@@ -8,8 +8,8 @@ exports.serverErrors = (err, req, res, next) => {
     extraKey: { status: 400, msg: 'request has too many properties' },
     extraArticle: { status: 400, msg: 'extra articles returned somehow' },
     badOrder: { status: 400, msg: 'invalid sort order' },
-    noAuthor: { status: 400, msg: 'author does not exist' },
-    noTopic: { status: 400, msg: 'topic does not exist' },
+    noAuthor: { status: 404, msg: 'author does not exist' },
+    noTopic: { status: 404, msg: 'topic does not exist' },
     noArticles: { status: 404, msg: 'no articles found' },
     noComment: { status: 404, msg: 'comment not found' }
   };

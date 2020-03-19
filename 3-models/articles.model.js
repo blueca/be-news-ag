@@ -47,7 +47,11 @@ exports.incrementArticleVotes = (article_id, votes) => {
 exports.insertComment = (article_id, body) => {
   if (Object.keys(body).length > 2) {
     return Promise.reject('extraKey');
-  } else {
+  }
+
+  return checkExists('articles', 'article_id', article_id).then(article => {
+    if (!article) return Promise.reject('noArticle');
+
     const newComment = { ...body };
     newComment.article_id = article_id;
     newComment.author = newComment.username;
@@ -59,7 +63,7 @@ exports.insertComment = (article_id, body) => {
       .then(comment => {
         return comment[0];
       });
-  }
+  });
 };
 
 exports.fetchComments = (params, query) => {
@@ -70,19 +74,16 @@ exports.fetchComments = (params, query) => {
     return Promise.reject('badOrder');
   }
 
-  return knex('articles')
-    .select('article_id')
-    .where({ article_id })
-    .then(articles => {
-      if (articles.length > 0) {
-        return knex('comments')
-          .select('comment_id', 'author', 'votes', 'created_at', 'body')
-          .where({ article_id })
-          .orderBy(sort_by, order);
-      } else {
-        return Promise.reject('noArticle');
-      }
-    });
+  return checkExists('articles', 'article_id', article_id).then(article => {
+    if (!article) {
+      return Promise.reject('noArticle');
+    } else {
+      return knex('comments')
+        .select('comment_id', 'author', 'votes', 'created_at', 'body')
+        .where({ article_id })
+        .orderBy(sort_by, order);
+    }
+  });
 };
 
 exports.fetchArticles = queries => {
@@ -91,30 +92,12 @@ exports.fetchArticles = queries => {
   if (order !== 'desc' && order !== 'asc') {
     return Promise.reject('badOrder');
   }
+  const users = author ? checkExists('users', 'username', author) : true;
+  const topics = topic ? checkExists('topics', 'slug', topic) : true;
 
-  const users = knex('users')
-    .select('username')
-    .then(users => {
-      if (
-        author !== undefined &&
-        users.filter(user => user.username === author).length === 0
-      ) {
-        return Promise.reject('noAuthor');
-      }
-    });
-
-  const topics = knex('topics')
-    .select('slug')
-    .then(topics => {
-      if (
-        topic !== undefined &&
-        topics.filter(dbtopic => dbtopic.slug === topic).length === 0
-      ) {
-        return Promise.reject('noTopic');
-      }
-    });
-
-  return Promise.all([users, topics]).then(() => {
+  return Promise.all([users, topics]).then(([usersExist, topicsExist]) => {
+    if (!usersExist) return Promise.reject('noAuthor');
+    if (!topicsExist) return Promise.reject('noTopic');
     return knex
       .select(
         'articles.author',
@@ -150,4 +133,63 @@ exports.fetchArticles = queries => {
         return nArticles;
       });
   });
+
+  // const users = knex('users')
+  //   .select('username')
+  //   .then(users => {
+  //     if (
+  //       author !== undefined &&
+  //       users.filter(user => user.username === author).length === 0
+  //     ) {
+  //       return Promise.reject('noAuthor');
+  //     }
+  //   });
+
+  // const topics = knex('topics')
+  //   .select('slug')
+  //   .then(topics => {
+  //     if (
+  //       topic !== undefined &&
+  //       topics.filter(dbtopic => dbtopic.slug === topic).length === 0
+  //     ) {
+  //       return Promise.reject('noTopic');
+  //     }
+  //   });
+
+  // return Promise.all([users, topics]).then(() => {
+  //   return knex
+  //     .select(
+  //       'articles.author',
+  //       'articles.title',
+  //       'articles.article_id',
+  //       'articles.topic',
+  //       'articles.created_at',
+  //       'articles.votes'
+  //     )
+  //     .from('articles')
+  //     .count({ comment_count: 'comment_id' })
+  //     .leftJoin('comments', 'articles.article_id', 'comments.article_id')
+  //     .groupBy('articles.article_id')
+  //     .modify(qb => {
+  //       if (author !== undefined) {
+  //         qb.where({ 'articles.author': author });
+  //       }
+  //     })
+  //     .modify(qb => {
+  //       if (topic !== undefined) {
+  //         qb.where({ 'articles.topic': topic });
+  //       }
+  //     })
+  //     .orderBy(sort_by, order)
+  //     .then(articles => {
+  //       const nArticles = articles.map(article => {
+  //         nArticle = { ...article };
+  //         nArticle.comment_count = parseInt(nArticle.comment_count);
+
+  //         return nArticle;
+  //       });
+  //       // return nArticles.length > 0 ? nArticles : Promise.reject('noArticles');
+  //       return nArticles;
+  //     });
+  // });
 };
