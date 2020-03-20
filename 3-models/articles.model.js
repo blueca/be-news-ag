@@ -104,7 +104,23 @@ exports.fetchArticles = queries => {
     ? checkExists('topics', 'slug', topic)
     : true;
 
-  return Promise.all([userExistsPromise, topicExistsPromise]).then(
+  const articlesCount = knex('articles')
+    .select()
+    .count('article_id')
+    .modify(qb => {
+      if (author !== undefined) {
+        qb.where({ author });
+      }
+    })
+    .modify(qb => {
+      if (topic !== undefined) {
+        qb.where({ topic });
+      }
+    })
+    .first()
+    .then(countObj => parseInt(countObj.count));
+
+  const articles = Promise.all([userExistsPromise, topicExistsPromise]).then(
     ([usersExist, topicsExist]) => {
       if (!usersExist) return Promise.reject('noAuthor');
       if (!topicsExist) return Promise.reject('noTopic');
@@ -142,4 +158,6 @@ exports.fetchArticles = queries => {
         });
     }
   );
+
+  return Promise.all([articles, articlesCount]);
 };

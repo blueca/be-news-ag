@@ -266,6 +266,21 @@ describe('/api', () => {
         });
       return Promise.all([notNumber, lessThanOne]);
     });
+    it('GET:200 returned object has a "total_count" property for the total number of articles, taking into account any filtering queries', () => {
+      const filtered = request(app)
+        .get('/api/articles?author=butter_bridge')
+        .expect(200)
+        .then(res => {
+          expect(res.body.total_count).to.equal(3);
+        });
+      const unfiltered = request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(res => {
+          expect(res.body.total_count).to.equal(12);
+        });
+      return Promise.all([filtered, unfiltered]);
+    });
     it('ERROR:405 for invalid methods', () => {
       const invalidMethods = ['patch', 'delete', 'put', 'post'];
       const methodPromises = invalidMethods.map(method => {
