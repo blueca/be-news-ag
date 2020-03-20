@@ -58,7 +58,10 @@ exports.insertComment = (article_id, body) => {
 
 exports.fetchComments = (params, query) => {
   const { article_id } = params;
-  const { sort_by = 'created_at', order = 'desc' } = query;
+  let { sort_by = 'created_at', order = 'desc', limit, p } = query;
+
+  limit = Number.isNaN(parseInt(limit)) || limit < 1 ? '10' : limit;
+  p = Number.isNaN(parseInt(p)) || p < 1 ? '1' : p;
 
   if (order !== 'desc' && order !== 'asc') {
     return Promise.reject('badOrder');
@@ -71,7 +74,9 @@ exports.fetchComments = (params, query) => {
       return knex('comments')
         .select('comment_id', 'author', 'votes', 'created_at', 'body')
         .where({ article_id })
-        .orderBy(sort_by, order);
+        .orderBy(sort_by, order)
+        .limit(limit)
+        .offset((p - 1) * limit);
     }
   });
 };

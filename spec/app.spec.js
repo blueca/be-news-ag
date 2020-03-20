@@ -529,6 +529,71 @@ describe('/api', () => {
               expect(res.body.error).to.equal('invalid sort order');
             });
         });
+        it('GET:200 accepts a limit query, which defaults to 10', () => {
+          return request(app)
+            .get('/api/articles/1/comments')
+            .expect(200)
+            .then(res => {
+              expect(res.body.comments).to.have.lengthOf(10);
+            });
+        });
+        it('GET:200 returns x results depending on limit query', () => {
+          return request(app)
+            .get('/api/articles/1/comments?limit=8')
+            .expect(200)
+            .then(res => {
+              expect(res.body.comments).to.have.lengthOf(8);
+            });
+        });
+        it('GET:200 returns default limited results when an invalid limit is entered (NaN or < 1)', () => {
+          const notNumber = request(app)
+            .get('/api/articles/1/comments?limit=not-valid')
+            .expect(200)
+            .then(res => {
+              expect(res.body.comments).to.have.lengthOf(10);
+            });
+          const lessThanOne = request(app)
+            .get('/api/articles/1/comments?limit=0')
+            .expect(200)
+            .then(res => {
+              expect(res.body.comments).to.have.lengthOf(10);
+            });
+          return Promise.all([notNumber, lessThanOne]);
+        });
+        it('GET:200 accepts a page number query ("p") which defaults to 1', () => {
+          return request(app)
+            .get('/api/articles/1/comments')
+            .expect(200)
+            .then(res => {
+              expect(res.body.comments[0].author).to.equal('butter_bridge');
+            });
+        });
+        it('GET:200 results change based on page number', () => {
+          return request(app)
+            .get('/api/articles/1/comments?p=2')
+            .expect(200)
+            .then(res => {
+              expect(res.body.comments[0].author).to.equal('icellusedkars');
+              expect(res.body.comments).to.have.lengthOf(3);
+            });
+        });
+        it('GET:200 returns default page when invalid page number is entered (NaN or < 1)', () => {
+          const notNumber = request(app)
+            .get('/api/articles/1/comments?p=not-valid')
+            .expect(200)
+            .then(res => {
+              expect(res.body.comments[0].author).to.equal('butter_bridge');
+              expect(res.body.comments).to.have.lengthOf(10);
+            });
+          const lessThanOne = request(app)
+            .get('/api/articles/1/comments?p=0')
+            .expect(200)
+            .then(res => {
+              expect(res.body.comments[0].author).to.equal('butter_bridge');
+              expect(res.body.comments).to.have.lengthOf(10);
+            });
+          return Promise.all([notNumber, lessThanOne]);
+        });
         it('ERROR:405 for invalid methods', () => {
           const invalidMethods = ['patch', 'delete', 'put'];
           const methodPromises = invalidMethods.map(method => {
