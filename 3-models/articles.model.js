@@ -91,7 +91,6 @@ exports.fetchArticles = queries => {
     topic
   } = queries;
 
-  //setting default limits/pages here instead of above, so that '0' will revert to default
   limit = Number.isNaN(parseInt(limit)) || limit < 1 ? '10' : limit;
   p = Number.isNaN(parseInt(p)) || p < 1 ? '1' : p;
 
