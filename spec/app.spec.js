@@ -91,7 +91,6 @@ describe('/api', () => {
         .get('/api/articles')
         .expect(200)
         .then(res => {
-          expect(res.body.articles).to.have.lengthOf(12);
           expect(res.body.articles[0]).to.have.all.keys([
             'author',
             'title',
@@ -160,7 +159,8 @@ describe('/api', () => {
         .get('/api/articles?topic=mitch')
         .expect(200)
         .then(res => {
-          expect(res.body.articles).to.have.lengthOf(11);
+          expect(res.body.articles).to.have.lengthOf(10);
+          expect(res.body.articles[4].topic).to.equal('mitch');
         });
     });
     it('ERROR:GET:400 returns error when filtering by an author who is not in the database', () => {
@@ -194,6 +194,77 @@ describe('/api', () => {
         .then(res => {
           expect(res.body.articles).to.eql([]);
         });
+    });
+    it('GET:200 accepts a limit query, which defaults to 10', () => {
+      return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(res => {
+          expect(res.body.articles).to.have.lengthOf(10);
+        });
+    });
+    it('GET:200 returns x results depending on limit query', () => {
+      return request(app)
+        .get('/api/articles?limit=8')
+        .expect(200)
+        .then(res => {
+          expect(res.body.articles).to.have.lengthOf(8);
+        });
+    });
+    it('GET:200 returns default limited results when an invalid limit is entered (NaN or < 1)', () => {
+      const notNumber = request(app)
+        .get('/api/articles?limit=not-valid')
+        .expect(200)
+        .then(res => {
+          expect(res.body.articles).to.have.lengthOf(10);
+        });
+      const lessThanOne = request(app)
+        .get('/api/articles?limit=0')
+        .expect(200)
+        .then(res => {
+          expect(res.body.articles).to.have.lengthOf(10);
+        });
+      return Promise.all([notNumber, lessThanOne]);
+    });
+    it('GET:200 accepts a page number query ("p") which defaults to 1', () => {
+      return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(res => {
+          expect(res.body.articles[0].title).to.equal(
+            'Living in the shadow of a great man'
+          );
+        });
+    });
+    it('GET:200 results change based on page number', () => {
+      return request(app)
+        .get('/api/articles?p=2')
+        .expect(200)
+        .then(res => {
+          expect(res.body.articles[0].title).to.equal('Am I a cat?');
+          expect(res.body.articles).to.have.lengthOf(2);
+        });
+    });
+    it('GET:200 returns default page when invalid page number is entered (NaN or < 1)', () => {
+      const notNumber = request(app)
+        .get('/api/articles?p=not-valid')
+        .expect(200)
+        .then(res => {
+          expect(res.body.articles[0].title).to.equal(
+            'Living in the shadow of a great man'
+          );
+          expect(res.body.articles).to.have.lengthOf(10);
+        });
+      const lessThanOne = request(app)
+        .get('/api/articles?p=0')
+        .expect(200)
+        .then(res => {
+          expect(res.body.articles[0].title).to.equal(
+            'Living in the shadow of a great man'
+          );
+          expect(res.body.articles).to.have.lengthOf(10);
+        });
+      return Promise.all([notNumber, lessThanOne]);
     });
     it('ERROR:405 for invalid methods', () => {
       const invalidMethods = ['patch', 'delete', 'put', 'post'];

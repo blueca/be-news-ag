@@ -77,7 +77,18 @@ exports.fetchComments = (params, query) => {
 };
 
 exports.fetchArticles = queries => {
-  let { sort_by = 'created_at', order = 'desc', author, topic } = queries;
+  let {
+    sort_by = 'created_at',
+    order = 'desc',
+    limit,
+    p,
+    author,
+    topic
+  } = queries;
+
+  //setting default limits/pages here instead of above, so that '0' will revert to default
+  limit = Number.isNaN(parseInt(limit)) || limit < 1 ? '10' : limit;
+  p = Number.isNaN(parseInt(p)) || p < 1 ? '1' : p;
 
   if (order !== 'desc' && order !== 'asc') {
     return Promise.reject('badOrder');
@@ -117,6 +128,8 @@ exports.fetchArticles = queries => {
           }
         })
         .orderBy(sort_by, order)
+        .limit(limit)
+        .offset((p - 1) * limit)
         .then(articles => {
           articles.forEach(article => {
             article.comment_count = parseInt(article.comment_count);
