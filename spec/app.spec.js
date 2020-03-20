@@ -609,6 +609,21 @@ describe('/api', () => {
             });
           return Promise.all([notNumber, lessThanOne]);
         });
+        it('GET:200 returned object  includes a total count of comments for that article', () => {
+          const articleNine = request(app)
+            .get('/api/articles/9/comments')
+            .expect(200)
+            .then(res => {
+              expect(res.body.total_count).to.equal(2);
+            });
+          const articleOne = request(app)
+            .get('/api/articles/1/comments')
+            .expect(200)
+            .then(res => {
+              expect(res.body.total_count).to.equal(13);
+            });
+          return Promise.all([articleNine, articleOne]);
+        });
         it('ERROR:405 for invalid methods', () => {
           const invalidMethods = ['patch', 'delete', 'put'];
           const methodPromises = invalidMethods.map(method => {

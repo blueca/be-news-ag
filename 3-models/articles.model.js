@@ -1,5 +1,5 @@
 const knex = require('../db/connection');
-const { checkExists } = require('../db/utils/utils');
+const { checkExists, getCount } = require('../db/utils/utils');
 
 exports.fetchArticle = article_id => {
   return knex
@@ -67,18 +67,26 @@ exports.fetchComments = (params, query) => {
     return Promise.reject('badOrder');
   }
 
-  return checkExists('articles', 'article_id', article_id).then(article => {
-    if (!article) {
-      return Promise.reject('noArticle');
-    } else {
-      return knex('comments')
-        .select('comment_id', 'author', 'votes', 'created_at', 'body')
-        .where({ article_id })
-        .orderBy(sort_by, order)
-        .limit(limit)
-        .offset((p - 1) * limit);
-    }
+  const commentCount = getCount('comments', 'comment_id', {
+    article_id
   });
+
+  const comments = checkExists('articles', 'article_id', article_id).then(
+    article => {
+      if (!article) {
+        return Promise.reject('noArticle');
+      } else {
+        return knex('comments')
+          .select('comment_id', 'author', 'votes', 'created_at', 'body')
+          .where({ article_id })
+          .orderBy(sort_by, order)
+          .limit(limit)
+          .offset((p - 1) * limit);
+      }
+    }
+  );
+
+  return Promise.all([comments, commentCount]);
 };
 
 exports.fetchArticles = queries => {
@@ -104,21 +112,7 @@ exports.fetchArticles = queries => {
     ? checkExists('topics', 'slug', topic)
     : true;
 
-  const articlesCount = knex('articles')
-    .select()
-    .count('article_id')
-    .modify(qb => {
-      if (author !== undefined) {
-        qb.where({ author });
-      }
-    })
-    .modify(qb => {
-      if (topic !== undefined) {
-        qb.where({ topic });
-      }
-    })
-    .first()
-    .then(countObj => parseInt(countObj.count));
+  const articlesCount = getCount('articles', 'article_id', { author, topic });
 
   const articles = Promise.all([userExistsPromise, topicExistsPromise]).then(
     ([usersExist, topicsExist]) => {

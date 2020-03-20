@@ -43,3 +43,27 @@ exports.checkExists = (table, column, query) => {
     .where({ [column]: query })
     .first();
 };
+
+exports.getCount = (table, column, where) => {
+  const { author, topic, article_id } = where;
+  return knex(table)
+    .select()
+    .count(column)
+    .modify(qb => {
+      if (author !== undefined) {
+        qb.where({ author });
+      }
+    })
+    .modify(qb => {
+      if (topic !== undefined) {
+        qb.where({ topic });
+      }
+    })
+    .modify(qb => {
+      if (article_id !== undefined) {
+        qb.where({ article_id });
+      }
+    })
+    .first()
+    .then(countObj => parseInt(countObj.count));
+};
