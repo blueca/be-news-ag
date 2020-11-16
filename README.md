@@ -36,7 +36,7 @@ Run endpoint unit tests:
 npm run test
 ```
 
-Run locally on [`http://localhost:3000/`](http://localhost:3000/):
+Run locally on [`http://localhost:9090/`](http://localhost:9090/):
 
 ```bash
 npm run dev
